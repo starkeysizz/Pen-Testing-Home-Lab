@@ -1,115 +1,51 @@
- Home Lab
+Home Lab
 
-A controlled environment built for malware analysis, offensive security testing, and system behavior research.  
-Each machine in this lab has a defined purpose, and the setup is segmented to prevent cross-contamination or accidental exposure.
+A controlled environment built for malware analysis, offensive security testing, and system behavior research. Each system in the lab has a defined role, and the setup is segmented to prevent cross-contamination or accidental exposure.
 
-
-
- Host Systems
-
+Host Systems
 Lenovo Laptop — Dual Boot (Windows + Linux)
-
 Windows Environment — Malware Analysis
-Used as the primary system for static and dynamic malware analysis.
 
-Toolchain includes:
-- IDA  
-- x64dbg  
-- PEStudio  
-- Procmon / Sysmon  
-- Wireshark  
+Primary platform for dynamic malware analysis and reverse engineering.
 
-Capabilities:
-- Unpacking and debugging  
-- Behavior monitoring  
-- YARA rule creation and testing  
-- Isolated networking for detonations  
-- Snapshot/revert workflow to maintain a clean baseline  
+Tools:
 
----
+IDA
+
+x64dbg
+
+PEStudio
+
+Procmon / Sysmon
+
+Wireshark
+
+Capabilities include malware unpacking and debugging, runtime behavior monitoring, API call tracing, YARA rule creation and validation, controlled detonation, and a snapshot/revert workflow to maintain a clean baseline. This environment is used strictly for executing and debugging Windows malware samples.
 
 Linux Environment — Attack & Utility
-Debian-based environment used for offensive tooling and general utility work.
 
-Tasks handled:
-- Network probing and enumeration  
-- Payload logic testing (non-malicious)  
-- Automation and scripting  
-- Hashing, metadata extraction, and log parsing  
+A Debian-based environment used for offensive tooling and general-purpose security tasks. It handles network probing and enumeration, payload logic testing (non-malicious), automation and scripting, and hashing, metadata extraction, and log parsing. Offensive tooling is kept fully isolated from malware execution environments.
 
-Keeps offensive operations fully separated from the Windows analysis side.
+REMnux Virtual Machine — Malware Analysis & Triage
 
----
+A dedicated REMnux VM running on VirtualBox, used for static analysis, malware triage, and network artifact extraction. It is the first stage of analysis before escalation to dynamic execution.
 
-Mac (High Sierra, 2010) — Victim System
-A real hardware target system used for controlled testing scenarios.
+Primary uses include strings and import analysis, entropy and packing detection, IOC extraction (IPs, domains, URLs, mutexes, file paths), unpacking and format inspection, PCAP analysis, and tooling such as peframe, floss, capa, radare2, and YARA.
 
-Purpose:
-- Observe behavior outside a virtualized environment  
-- Test samples and tools that behave differently on bare metal  
-- Evaluate older OS attack chains and persistence methods  
+Mac Hardware (Debian Linux) — Bare-Metal Victim & Infrastructure
 
-Physically and network-isolated to prevent unintended spread.
+A repurposed Mac system with macOS wiped and replaced with Debian Linux. This system serves as both a bare-metal victim and a lightweight infrastructure node.
 
----
-
-Debian CLI Node
-A lightweight command-line environment used for:
-
-- Network services  
-- Log collection  
-- Analysis utilities  
-- Running simulated back-end infrastructure  
-
-Provides a predictable, easily resettable backbone for experiments.
-
----
+It is used to observe behavior that differs from virtualized environments, evaluate persistence techniques and system-level changes on real hardware, host simulated backend or C2 services, and collect logs and network traffic. The system is physically and network-isolated to prevent unintended spread.
 
 Network Structure
 
-- No shared folders, clipboard, or device passthrough between systems  
-- Internal-only network segments for malware execution  
-- Outbound traffic blocked unless intentionally simulated  
-- Physical isolation for the Mac victim machine  
-- Strict firewall rules and snapshot-based safeguards  
-
----
+There are no shared folders, clipboards, or device passthroughs between systems. Malware execution occurs only on internal-only network segments. Outbound traffic is blocked unless intentionally simulated. The bare-metal Debian system is physically isolated, and strict firewall rules and snapshot-based safeguards are enforced throughout the lab.
 
 Analysis Workflow
 
-1. Sample Intake  
-   Collect → hash → record metadata → initial static checks  
-
-2. Static Analysis 
-   Strings, imports, sections, obfuscation artifacts  
-
-3. Dynamic Execution 
-   Controlled detonation in the Windows analysis environment  
-
-4. Artifact Capture  
-   Registry changes, filesystem modifications, dropped files, network traffic  
-
-5. IOC Extraction  
-   Hashes, IPs, domains, filepaths, mutexes, behavior indicators  
-
-6. Reporting  
-   Write-up creation, ATT&CK mapping, detection logic, YARA rules  
-
-7. Snapshot Revert  
-   Reset the environment to a clean, known state  
-
-
+Samples are collected, hashed, and documented before undergoing initial triage in REMnux. Static analysis follows, focusing on strings, imports, entropy, packing indicators, and IOC extraction. Dynamic execution is performed in the Windows analysis environment, with artifacts captured including registry changes, filesystem modifications, dropped files, and network traffic. Indicators of compromise are consolidated, and reports are produced with ATT&CK mapping, detection logic, and YARA rules. All systems are then reverted to a known clean state.
 
 Why This Setup Works
 
-The lab is intentionally simple but highly functional:
-
-- Windows handles structured malware analysis.  
-- Linux handles offensive scripting and tooling.  
-- Mac High Sierra serves as a realistic victim for bare-metal testing.  
-- Debian CLI provides back-end services and utilities.  
-
-Every component has a role, nothing is arbitrary, and the environment stays controlled, isolated, and repeatable.
-
-
-
+This lab is intentionally simple but highly effective. REMnux provides safe static analysis and early triage. Windows handles execution, debugging, and behavioral analysis. Linux supports offensive tooling and automation. The bare-metal Debian system enables realistic victim testing and infrastructure simulation. Every component has a defined role, nothing is redundant, and the environment remains controlled, isolated, and repeatable.
